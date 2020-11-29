@@ -1,0 +1,9 @@
+{
+  "name": "next-api-middleware",
+  "version": "0.1.0",
+  "description": "Middleware solution for Next.js API routes",
+  "main": "index.js",
+  "repository": "git@github.com:htunnicliff/next-api-middleware.git",
+  "author": "Hunter Tunnicliff <htunnicliff@hey.com>",
+  "license": "MIT"
+}
