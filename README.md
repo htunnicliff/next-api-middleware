@@ -1,8 +1,16 @@
 # Next API Middleware
 
-<a aria-label="NPM version" href="https://www.npmjs.com/package/next-api-middleware">
-  <img alt="" src="https://flat.badgen.net/npm/v/next-api-middleware">
-</a>
+<p>
+  <a aria-label="NPM version" href="https://www.npmjs.com/package/next-api-middleware">
+    <img alt="NPM version" src="https://img.shields.io/npm/v/next-api-middleware.svg?style=for-the-badge&labelColor=000000" />
+  </a>
+  <a aria-label="License" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE.txt">
+    <img alt="" src="https://img.shields.io/npm/l/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
+  </a>
+  <a href="https://github.com/htunnicliff/next-api-middleware/actions">
+    <img alt="GitHub tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Main?style=for-the-badge&labelColor=000000&label=Tests" />
+  </a>
+<p>
 
 Next.js API routes are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there are no easy ways to implement it. The official Next.js docs recommend just running middleware as functions within your API route. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
 
