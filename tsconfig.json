@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "rootDir": "lib",
+    "declaration": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["lib"],
+  "exclude": ["node_modules"]
+}
