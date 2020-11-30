@@ -1,21 +1,21 @@
-import { isMiddleware, use, named, makeMiddlewareExecutor } from "./main";
+import { hasMiddlewareSignature, use, named, makeMiddlewareExecutor } from ".";
 
-describe("isMiddleware", () => {
+describe("hasMiddlewareSignature", () => {
   it("returns false for invalid input", () => {
-    expect(isMiddleware(NaN)).toBe(false);
-    expect(isMiddleware(0)).toBe(false);
-    expect(isMiddleware({})).toBe(false);
-    expect(isMiddleware(Function)).toBe(false);
-    expect(isMiddleware([])).toBe(false);
-    expect(isMiddleware(false)).toBe(false);
-    expect(isMiddleware(true)).toBe(false);
-    expect(isMiddleware("")).toBe(false);
-    expect(isMiddleware((arg1, arg2) => {})).toBe(false);
-    expect(isMiddleware((arg1, arg2, arg3, arg4) => {})).toBe(false);
+    expect(hasMiddlewareSignature(NaN)).toBe(false);
+    expect(hasMiddlewareSignature(0)).toBe(false);
+    expect(hasMiddlewareSignature({})).toBe(false);
+    expect(hasMiddlewareSignature(Function)).toBe(false);
+    expect(hasMiddlewareSignature([])).toBe(false);
+    expect(hasMiddlewareSignature(false)).toBe(false);
+    expect(hasMiddlewareSignature(true)).toBe(false);
+    expect(hasMiddlewareSignature("")).toBe(false);
+    expect(hasMiddlewareSignature((arg1, arg2) => {})).toBe(false);
+    expect(hasMiddlewareSignature((arg1, arg2, arg3, arg4) => {})).toBe(false);
   });
 
   it("returns true for valid input", () => {
-    expect(isMiddleware((arg1, arg2, arg3) => {})).toBe(true);
+    expect(hasMiddlewareSignature((arg1, arg2, arg3) => {})).toBe(true);
   });
 });
 
