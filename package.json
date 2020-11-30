@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "rm -rf dist && npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
