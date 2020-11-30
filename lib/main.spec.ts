@@ -1,4 +1,4 @@
-import { isMiddleware, use, named, makeMiddlewareExecutor } from ".";
+import { isMiddleware, use, named, makeMiddlewareExecutor } from "./main";
 
 describe("isMiddleware", () => {
   it("returns false for invalid input", () => {
