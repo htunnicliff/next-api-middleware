@@ -12,6 +12,8 @@
   </a>
 <p>
 
+_**Warning: This library is in alpha, so APIs may change at any time.**_
+
 ## Introduction
 
 Next.js API routes are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there are no easy ways to implement it. The official Next.js docs recommend just running middleware as functions within your API route. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
