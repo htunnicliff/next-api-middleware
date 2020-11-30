@@ -12,11 +12,51 @@
   </a>
 <p>
 
+## Introduction
+
 Next.js API routes are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there are no easy ways to implement it. The official Next.js docs recommend just running middleware as functions within your API route. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
 
 This library is an attempt to provide Next.js applications with clean, composable middleware patterns inspired by Koa.js.
 
-## Get Started
+## Quick Start
+
+```js
+import { use } from "next-api-middleware";
+
+const addTimingHeaders = async (req, res, next) => {
+  res.setHeader("X-Timing-Start", new Date().getTime());
+  await next();
+  res.setHeader("X-Timing-End", new Date().getTime());
+};
+
+const loadUser = (req, res, next) => {
+  req.locals.user = {
+    name: req.query.name || "Oswald",
+    age: req.query.age || 42,
+  };
+
+  return next();
+};
+
+const apiHandler = async (req, res) => {
+  const { user } = req.locals;
+  res.status(200);
+  res.send(`${user.name} is ${user.age} old!`);
+};
+
+export default use(addTimingHeaders, loadUser)(apiHandler);
+```
+
+Here's a breakdown of what's happening:
+
+0. A GET request hits this API route.
+1. addTimingHeaders (middleware) sets the X-Timing-Start header.
+2. loadUser (middleware) sets the value of req.locals.user.
+3. apiHandler (API route handler) sends a response.
+4. addTimingHeaders sets the X-Timing-End header.
+5. The request completes.
+
+## Usage
 
 There are only two methods you need to learn: `named` and `use`. Both are two different ways to tackle the challenge of adding reusable middleware throughout your applications API routes.
 
