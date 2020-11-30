@@ -2,13 +2,13 @@
 
 <p>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/next-api-middleware">
-    <img alt="NPM version" src="https://img.shields.io/npm/v/next-api-middleware.svg?style=for-the-badge&labelColor=000000" />
+    <img alt="NPM version" src="https://img.shields.io/npm/v/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
   <a aria-label="License" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE.txt">
-    <img alt="" src="https://img.shields.io/npm/l/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
+    <img alt="" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
   <a href="https://github.com/htunnicliff/next-api-middleware/actions">
-    <img alt="GitHub tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Main?style=for-the-badge&labelColor=000000&label=Tests" />
+    <img alt="GitHub tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Main?style=for-the-badge&labelColor=000000&label=Tests">
   </a>
 <p>
 
