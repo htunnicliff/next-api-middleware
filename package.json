@@ -6,6 +6,12 @@
   "repository": "git@github.com:htunnicliff/next-api-middleware.git",
   "author": "Hunter Tunnicliff <htunnicliff@hey.com>",
   "license": "MIT",
+  "keywords": [
+    "next",
+    "middleware",
+    "API routes",
+    "koa"
+  ],
   "files": [
     "dist",
     "package.json",
@@ -14,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "prepublish": "rm -rf dist && npm run build"
+    "prepare": "rm -rf dist && npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
