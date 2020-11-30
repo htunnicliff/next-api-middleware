@@ -16,8 +16,8 @@ export function isMiddleware(input: unknown): input is Middleware {
 export type Middleware = (
   req: NextApiRequest,
   res: NextApiResponse,
-  next: () => void | Promise<void>
-) => void | Promise<void>;
+  next: () => Promise<void>
+) => Promise<void>;
 
 /**
  * @example
@@ -58,21 +58,25 @@ export const named = <
     throw new Error("Invalid middleware functions");
   }
 
-  return (...chosenMiddleware: (keyof T)[]) => {
+  return (...chosenMiddleware: (keyof T | Middleware)[]) => {
     // Select middleware based on provided names.
     const middleware: Middleware[] = chosenMiddleware.reduce(
       (middleware, chosen) => {
-        // Validate that chosen exists.
-        if (!(chosen in namedMiddlewares)) {
-          throw new Error(`Middleware "${chosen}" not available`);
+        if (isMiddleware(chosen)) {
+          return [...middleware, chosen];
+        } else {
+          // Validate that chosen exists.
+          if (!(chosen in namedMiddlewares)) {
+            throw new Error(`Middleware "${chosen}" not available`);
+          }
+
+          // Get middleware from named collection.
+          const fn = namedMiddlewares[chosen];
+
+          // Add function(s) to array.
+          // NOTE: The isArray check allows for middleware groups
+          return [...middleware, ...(Array.isArray(fn) ? fn : [fn])];
         }
-
-        // Get middleware from named collection.
-        const fn = namedMiddlewares[chosen];
-
-        // Add function(s) to array.
-        // NOTE: The isArray check allows for middleware groups
-        return [...middleware, ...(Array.isArray(fn) ? fn : [fn])];
       },
       []
     );
@@ -92,7 +96,7 @@ export function makeMiddlewareExecutor(middleware: Middleware[]) {
         const last = middleware.length === 1;
 
         // Execute the current middleware, passing along remaining middlewares.
-        return current(req, res, () =>
+        return current(req, res, async () =>
           // If last, execute the API route handler itself.
           last ? apiRouteHandler(req, res) : run(remaining)
         );
