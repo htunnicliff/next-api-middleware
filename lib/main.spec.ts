@@ -79,6 +79,24 @@ describe("named", () => {
       ].toString()
     );
   });
+
+  it("calls default middleware", async () => {
+    const middleware1 = jest.fn((req, res, next) => next());
+
+    const middlewareWithDefaults = named(
+      {
+        m1: middleware1,
+      },
+      { defaults: ["m1"] }
+    );
+
+    const handler = jest.fn();
+
+    await middlewareWithDefaults()(handler)({} as any, {} as any);
+
+    expect(middleware1).toBeCalled();
+    expect(handler).toBeCalled();
+  });
 });
 
 describe("makeMiddlewareExecutor", () => {

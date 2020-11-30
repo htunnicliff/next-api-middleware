@@ -51,7 +51,10 @@ export const named = <
     [name: string]: Middleware | Middleware[];
   }
 >(
-  namedMiddlewares: T
+  namedMiddlewares: T,
+  options?: {
+    defaults: (keyof T)[];
+  }
 ) => {
   // Check every value for middleware signature.
   if (!Object.values(namedMiddlewares).flat().every(isMiddleware)) {
@@ -60,26 +63,26 @@ export const named = <
 
   return (...chosenMiddleware: (keyof T | Middleware)[]) => {
     // Select middleware based on provided names.
-    const middleware: Middleware[] = chosenMiddleware.reduce(
-      (middleware, chosen) => {
-        if (isMiddleware(chosen)) {
-          return [...middleware, chosen];
-        } else {
-          // Validate that chosen exists.
-          if (!(chosen in namedMiddlewares)) {
-            throw new Error(`Middleware "${chosen}" not available`);
-          }
-
-          // Get middleware from named collection.
-          const fn = namedMiddlewares[chosen];
-
-          // Add function(s) to array.
-          // NOTE: The isArray check allows for middleware groups
-          return [...middleware, ...(Array.isArray(fn) ? fn : [fn])];
+    const middleware: Middleware[] = [
+      ...(options?.defaults || []),
+      ...chosenMiddleware,
+    ].reduce((middleware, chosen) => {
+      if (isMiddleware(chosen)) {
+        return [...middleware, chosen];
+      } else {
+        // Validate that chosen exists.
+        if (!(chosen in namedMiddlewares)) {
+          throw new Error(`Middleware "${chosen}" not available`);
         }
-      },
-      []
-    );
+
+        // Get middleware from named collection.
+        const fn = namedMiddlewares[chosen];
+
+        // Add function(s) to array.
+        // NOTE: The isArray check allows for middleware groups
+        return [...middleware, ...(Array.isArray(fn) ? fn : [fn])];
+      }
+    }, []);
 
     return makeMiddlewareExecutor(middleware);
   };
