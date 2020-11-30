@@ -23,22 +23,48 @@ This library is an attempt to provide Next.js applications with clean, composabl
 ## Quick Start
 
 ```js
+/* pages/api/hello-world.js */
 import { use } from "next-api-middleware";
 
-const addTimingHeaders = async (req, res, next) => {
-  res.setHeader("X-Timing-Start", new Date().getTime());
-  await next();
-  res.setHeader("X-Timing-End", new Date().getTime());
-};
+const withMiddleware = use(
+  async function captureErrorsInSentry(req, res, next) {
+    try {
+      // Let request continue
+      await next();
+    } catch (err) {
+      // Add request URL to Sentry context
+      Sentry.setTag("url", req.url);
 
-const loadUser = (req, res, next) => {
-  req.locals.user = {
-    name: req.query.name || "Oswald",
-    age: req.query.age || 42,
-  };
+      // Capture error in Sentry
+      Sentry.captureException(err);
+      await Sentry.flush(2000);
 
-  return next();
-};
+      // Send error response
+      res.status(500);
+      res.json({ error: err.message });
+    }
+  },
+  function onlyGetRequests(req, res, next) {
+    if (req.method === "GET") {
+      // Let GET requests continue
+      return next();
+    } else {
+      // Send not found
+      res.status(404);
+      res.send("Not found");
+    }
+  },
+  async function connectDatabase(req, res, next) {
+    // Load database before request
+    req.local.db = await loadYourDatabase();
+
+    // Let request continue
+    await next();
+
+    // Clean up database after request
+    await req.local.database.destroy();
+  }
+);
 
 const apiHandler = async (req, res) => {
   const { user } = req.locals;
@@ -46,19 +72,14 @@ const apiHandler = async (req, res) => {
   res.send(`${user.name} is ${user.age} old!`);
 };
 
-export default use(addTimingHeaders, loadUser)(apiHandler);
+export default withMiddleware(apiHandler);
 ```
 
-Here's a breakdown of what's happening:
-
-0. A GET request hits this API route.
-1. addTimingHeaders (middleware) sets the X-Timing-Start header.
-2. loadUser (middleware) sets the value of req.locals.user.
-3. apiHandler (API route handler) sends a response.
-4. addTimingHeaders sets the X-Timing-End header.
-5. The request completes.
-
 ## Usage
+
+1. [Create Middleware Functions](#create-middleware-functions)
+2. [Compose Reusable Groups](#compose-reusable-groups)
+3. [Apply Middleware to API Routes](#apply-middleware-to-api-routes)
 
 ### 1. Create Middleware Functions
 
@@ -107,17 +128,17 @@ Let's walk through each of these functions to better understand what happens whe
 
 **Note: Always `return` or `await` the \`next\` function, otherwise requests will time out.**
 
-### 2. Compose Reusable Groups with `use`
+### 2. Compose Reusable Groups
 
 ```js
 /* lib/middleware/groups.js */
+import { use } from "next-api-middleware";
 import {
   addRequestTiming,
   logErrorsWithACME,
   addRequestUUID,
 } from "../helpers";
 import { connectDatabase, loadUsers } from "../users";
-import { use } from "next-api-middleware";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -143,40 +164,7 @@ The `use` function creates a higher order function (HOC) that can be used to app
 
 It also accepts arrays of middleware functions, which makes it trivial to add certain middleware conditionally. In both `useGuestMiddleware` and `useAuthMiddleware`, the `isProduction` variable determined whether or not the request timing and error tracking middleware are included.
 
-#### Middleware Factories
-
-Since `use` accepts values that _evaluate_ to middleware functions, this provides the opportunity to create custom middleware factories, e.g. functions that create middleware. Here's an example of a factory that generates middleware to only allow requests with a given HTTP method:
-
-```ts
-import { use, Middleware } from "next-api-middleware";
-
-/**
- * Return 404 for invalid request methods.
- */
-export const httpMethod = (
-  allowedHttpMethod: "GET" | "POST" | "PUT" | "PATCH"
-): Middleware => {
-  return async function (req, res, next) {
-    if (req.method === allowedHttpMethod || req.method == "OPTIONS") {
-      // If method is allowed, let request continue
-      await next();
-    } else {
-      // Otherwise, finish the request and respond with a 404
-      res.status(404);
-      res.end();
-    }
-  };
-};
-
-export const withAuthMiddleware = use(
-  httpMethod("POST"), // only allow POST requests
-  addRequestTiming,
-  logErrorsWithACME,
-  addRequestUUID
-);
-```
-
-### 3. Apply Middleware to API routes
+### 3. Apply Middleware to API Routes
 
 To apply a middleware group to an API route, just import it and provide the API route handler as an argument:
 
@@ -190,4 +178,39 @@ const apiHandler = async (req, res) => {
 };
 
 export default withGuestMiddleware(apiHandler);
+```
+
+## Advanced
+
+## Middleware Factories
+
+Since `use` accepts values that _evaluate_ to middleware functions, this provides the opportunity to create custom middleware factories: functions that create middleware.
+
+Here's an example of a factory that generates a middleware function to only allow requests with a given HTTP method:
+
+```js
+import { use } from "next-api-middleware";
+
+/**
+ * Return 404 for invalid request methods
+ */
+export const httpMethod = (allowedHttpMethod) => {
+  return async function (req, res, next) {
+    if (req.method === allowedHttpMethod || req.method == "OPTIONS") {
+      // If method is allowed, let request continue
+      await next();
+    } else {
+      // Otherwise, finish the request and respond with a 404
+      res.status(404);
+      res.end();
+    }
+  };
+};
+
+export const withAuthMiddleware = use(
+  httpMethod("POST"), // only allows POST requests
+  addRequestTiming,
+  logErrorsWithACME,
+  addRequestUUID
+);
 ```
