@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
+    "target": "ES2020",
     "moduleResolution": "node",
     "outDir": "dist",
     "rootDir": "lib",
     "declaration": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true
   },
   "include": ["lib"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "lib/**/*.spec.ts"]
 }
