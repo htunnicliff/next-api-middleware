@@ -76,29 +76,19 @@ export default middleware(apiRouteHandler);
 ### :one: Create Middleware Functions
 
 ```ts
-/* lib/middleware/helpers.js */
 import type { Middleware } from "next-api-middleware";
 
-/**
- * Add a unique ID to response headers
- */
 export const addRequestUUID: Middleware = (req, res, next) => {
   res.setHeader("X-Response-ID", uuid());
   return next();
 };
 
-/**
- * Add request start and end times to response headers
- */
 export const addRequestTiming: Middleware = async (req, res, next) => {
   res.setHeader("X-Timing-Start", new Date().getTime());
   await next();
   res.setHeader("X-Timing-End", new Date().getTime());
 };
 
-/**
- * Log errors to ACME error monitoring service
- */
 export const logErrorsWithACME: Middleware = async (req, res, next) => {
   try {
     await next();
@@ -110,20 +100,9 @@ export const logErrorsWithACME: Middleware = async (req, res, next) => {
 };
 ```
 
-Let's walk through each of these functions to better understand what happens when they are used with an API route.
-
-| Function                | Work before request          | Work after request                                                                   | Explaination                                                                                                                              |
-| ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| **`addRequestUUID`**    | Add a header with a UUID     | _None_                                                                               | This function only does work _before_ the request, so it doesn't need to use `await`.                                                     |
-| **`addRequestTiming`**  | Add a header with start time | Add a header with end time                                                           | This function does work before _and_ after the request, so it uses `await` to let the request continue before finally adding an end time. |
-| **`logErrorsWithACME`** | _None_                       | If an error is caught, log and respond with an error message – otherwise, do nothing | This function lets the request proceed immediately, but is able to catch errors that bubble up using its try/catch block.                 |
-
-**Note: Always `return` or `await` the \`next\` function, otherwise requests will time out.**
-
 ### :two: Compose Reusable Groups
 
 ```js
-/* lib/middleware/groups.js */
 import { use } from "next-api-middleware";
 import {
   addRequestTiming,
@@ -132,36 +111,32 @@ import {
 } from "../helpers";
 import { connectDatabase, loadUsers } from "../users";
 
-const isProduction = process.env.NODE_ENV === "production";
-
-/**
- * Middleware for guest-accessible routes
- */
-export const useGuestMiddleware = use(
-  isProduction ? [addRequestTiming, logErrorsWithACME] : []
-);
-
-/**
- * Middleware for user-accessible routes
- */
-export const useAuthMiddleware = use(
-  isProduction ? [addRequestTiming, logErrorsWithACME] : [],
+export const authMiddleware = use(
+  addRequestTiming,
+  logErrorsWithACME,
   addRequestUUID,
   connectDatabase,
   loadUsers
 );
+
+export const guestMiddleware = use(
+  isProduction ? [addRequestTiming, logErrorsWithACME] : [],
+  addRequestUUID
+);
+
+export const otherMiddleware = use(
+  [addRequestUUID, connectDatabase, loadUsers],
+  [addRequestTiming, logErrorsWithACME]
+);
 ```
 
-The `use` function creates a higher order function (HOC) that can be used to apply a group of middleware to an API route (see section #3 for more info). `use` accepts a list of values that evaluate to middleware functions.
-
-It also accepts arrays of middleware functions, which makes it trivial to add certain middleware conditionally. In both `useGuestMiddleware` and `useAuthMiddleware`, the `isProduction` variable determined whether or not the request timing and error tracking middleware are included.
+The `use` method creates a higher order function that applies middleware to an API route. `use` accepts a list of values that evaluate to middleware functions. It also accepts arrays of middleware functions, which are flattened at runtime (order is preserved).
 
 ### :three: Apply Middleware to API Routes
 
 To apply a middleware group to an API route, just import it and provide the API route handler as an argument:
 
 ```js
-// pages/api/hello-world.js
 import { withGuestMiddleware } from "../../middleware/groups";
 
 const apiHandler = async (req, res) => {
@@ -176,23 +151,20 @@ export default withGuestMiddleware(apiHandler);
 
 ### Middleware Factories
 
-Since `use` accepts values that _evaluate_ to middleware functions, this provides the opportunity to create custom middleware factories: functions that create middleware.
+Since `use` accepts values that evaluate to middleware functions, this provides the opportunity to create custom middleware factories.
 
 Here's an example of a factory that generates a middleware function to only allow requests with a given HTTP method:
 
-```js
-import { use } from "next-api-middleware";
+```ts
+import { use, Middleware } from "next-api-middleware";
 
-/**
- * Return 404 for invalid request methods
- */
-export const httpMethod = (allowedHttpMethod) => {
+const httpMethod = (
+  allowedHttpMethod: "GET" | "POST" | "PATCH"
+): Middleware => {
   return async function (req, res, next) {
     if (req.method === allowedHttpMethod || req.method == "OPTIONS") {
-      // If method is allowed, let request continue
       await next();
     } else {
-      // Otherwise, finish the request and respond with a 404
       res.status(404);
       res.end();
     }
@@ -200,7 +172,7 @@ export const httpMethod = (allowedHttpMethod) => {
 };
 
 export const withAuthMiddleware = use(
-  httpMethod("POST"), // only allows POST requests
+  httpMethod("POST"),
   addRequestTiming,
   logErrorsWithACME,
   addRequestUUID
