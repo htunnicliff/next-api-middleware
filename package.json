@@ -2,19 +2,24 @@
   "name": "next-api-middleware",
   "version": "0.3.4",
   "description": "Middleware solution for Next.js API routes",
-  "main": "dist/index.js",
   "repository": "git@github.com:htunnicliff/next-api-middleware.git",
   "author": "Hunter Tunnicliff <htunnicliff@hey.com>",
   "license": "MIT",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">= 12.x"
+  },
   "keywords": [
     "next",
+    "next.js",
     "middleware",
     "API routes",
     "koa"
   ],
   "files": [
     "dist",
+    "LICENSE",
     "package.json",
     "README.md"
   ],

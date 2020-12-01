@@ -1,4 +1,9 @@
-import { hasMiddlewareSignature, use, named, makeMiddlewareExecutor } from ".";
+import {
+  hasMiddlewareSignature,
+  use,
+  named,
+  makeMiddlewareExecutor,
+} from "./index";
 
 describe("hasMiddlewareSignature", () => {
   it("returns false for invalid input", () => {
