@@ -1,6 +1,12 @@
 name: Test
 
-on: push
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+      - "**.js"
+      - "**.ts"
+      - "**.json"
 
 jobs:
   test:
