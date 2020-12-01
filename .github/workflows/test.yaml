@@ -21,4 +21,10 @@ jobs:
       - run: npm test
         env:
           CI: true
-      - run: npm run build --noEmit
+      - uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/coverage-final.json
+          # flags: unittests
+          # name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
