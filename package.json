@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "repository": "git@github.com:htunnicliff/next-api-middleware.git",
   "author": "Hunter Tunnicliff <htunnicliff@hey.com>",
-  "license": "AGPL-3.0-or-later",
+  "license": "MIT",
   "types": "dist/index.d.ts",
   "keywords": [
     "next",
