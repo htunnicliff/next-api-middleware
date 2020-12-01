@@ -132,6 +132,36 @@ export const otherMiddleware = use(
 
 The `use` method creates a higher order function that applies middleware to an API route. `use` accepts a list of values that evaluate to middleware functions. It also accepts arrays of middleware functions, which are flattened at runtime (order is preserved).
 
+Another available method for grouping middleware is `label`. Here's how it works:
+
+```ts
+import { label } from "next-api-middleware";
+import {
+  addRequestTiming,
+  logErrorsWithACME,
+  addRequestUUID,
+} from "../helpers";
+
+const middleware = label(
+  timing: addRequestTiming,
+  logErrors: logErrorsWithACME,
+  uuids: addRequestUUID,
+  all: [addRequestTiming, logErrorsWithACME, addRequestUUID]
+);
+
+const apiRouteHandler = async (req, res) => {
+  const { name } = req.locals.user;
+
+  res.status(200);
+  res.send(`Hello, ${name}!`);
+};
+
+// Invokes `addRequestTiming` and `logErrorsWithACME`
+export default middleware(["timing", "logErrors"])(apiRouteHandler);
+```
+
+Using `label` creates a middleware group that, by default, doesn't invoke any middleware. Instead, it allows choosing specific middleware by supplying labels as arguments in the API route.
+
 ### :three: Apply Middleware to API Routes
 
 To apply a middleware group to an API route, just import it and provide the API route handler as an argument:

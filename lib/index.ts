@@ -8,7 +8,7 @@ export interface Middleware {
   ): Promise<void>;
 }
 
-export interface NamedMiddleware {
+export interface LabeledMiddleware {
   [name: string]: Middleware | Middleware[];
 }
 
@@ -25,9 +25,9 @@ export function use(...middleware: (Middleware | Middleware[])[]) {
   return makeMiddlewareExecutor(middlewareFns);
 }
 
-export function named<T extends NamedMiddleware>(
+export function label<T extends LabeledMiddleware>(
   middleware: T,
-  options?: { defaults: (keyof T)[] }
+  defaults: (keyof T)[] = []
 ) {
   // Check signatures
   if (
@@ -42,7 +42,6 @@ export function named<T extends NamedMiddleware>(
   return function curryMiddlewareChoices(
     ...chosenMiddleware: (keyof T | Middleware)[]
   ) {
-    const defaults = options?.defaults || [];
     const middlewareFns: Middleware[] = [];
 
     // Load middleware for each choice

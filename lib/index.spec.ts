@@ -1,7 +1,7 @@
 import {
   hasMiddlewareSignature,
   use,
-  named,
+  label,
   makeMiddlewareExecutor,
 } from "./index";
 
@@ -30,13 +30,13 @@ describe("use", () => {
   });
 });
 
-describe("named", () => {
+describe("label", () => {
   it("throws an error for invalid middleware", () => {
     // @ts-ignore
-    expect(() => named({ notMiddleware: NaN })).toThrowError();
+    expect(() => label({ notMiddleware: NaN })).toThrowError();
   });
 
-  it("calls named middleware in order", async () => {
+  it("calls labeled middleware in order", async () => {
     const log = [];
 
     // Setup middleware
@@ -58,7 +58,7 @@ describe("named", () => {
       log.push("teardown groupMiddleware2");
     });
 
-    const useNamed = named({
+    const withMiddleware = label({
       one: middleware1,
       two: middleware2,
       three: middleware3,
@@ -67,7 +67,7 @@ describe("named", () => {
 
     const handler = jest.fn();
 
-    await useNamed("sampleGroup", "two")(handler)({} as any, {} as any);
+    await withMiddleware("sampleGroup", "two")(handler)({} as any, {} as any);
 
     expect(middleware2).toBeCalled();
     expect(groupMiddleware1).toBeCalled();
@@ -88,11 +88,11 @@ describe("named", () => {
   it("calls default middleware", async () => {
     const middleware1 = jest.fn((req, res, next) => next());
 
-    const middlewareWithDefaults = named(
+    const middlewareWithDefaults = label(
       {
         m1: middleware1,
       },
-      { defaults: ["m1"] }
+      ["m1"]
     );
 
     const handler = jest.fn();
