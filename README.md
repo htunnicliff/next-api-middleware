@@ -1,4 +1,4 @@
-# Next API Middleware
+# Next.js API Middleware
 
 <p>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/next-api-middleware">
