@@ -1,10 +1,9 @@
-name: Main
+name: Test
 
 on: push
 
 jobs:
   test:
-    name: Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,3 +18,4 @@ jobs:
       - run: npm test
         env:
           CI: true
+      - run: npm run build --noEmit
