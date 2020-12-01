@@ -4,7 +4,7 @@
   <a aria-label="NPM version" href="https://www.npmjs.com/package/next-api-middleware">
     <img alt="NPM version" src="https://img.shields.io/npm/v/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
-  <a aria-label="License" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE.txt">
+  <a aria-label="License" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE">
     <img alt="" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
   <a href="https://github.com/htunnicliff/next-api-middleware/actions">
