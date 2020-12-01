@@ -12,8 +12,6 @@
   </a>
 <p>
 
-:warning: **Warning: This library is in alpha, so APIs may change at any time.**
-
 ## Introduction
 
 [Next.js API routes](https://nextjs.org/docs/api-routes/introduction) are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there is no easy way to implement it.
