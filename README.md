@@ -12,22 +12,29 @@
   </a>
 <p>
 
-_**Warning: This library is in alpha, so APIs may change at any time.**_
+:warning: _** Warning: This library is in alpha, so APIs may change at any time.**_
 
 ## Introduction
 
-Next.js API routes are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there are no easy ways to implement it. The official Next.js docs recommend just running middleware as functions within your API route. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
+[Next.js API routes](https://nextjs.org/docs/api-routes/introduction) are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there is no easy way to implement it.
 
-This library is an attempt to provide Next.js applications with clean, composable middleware patterns inspired by Koa.js.
+The official Next.js docs recommend writing functions [inside your API route handler](https://nextjs.org/docs/api-routes/api-middlewares) :thumbsdown:. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
+
+This library attempts to provide minimal, clean, composable middleware patterns that are both productive and pleasant to use. :tada
 
 ## Quick Start
 
 ```js
 /* pages/api/hello-world.js */
+
+// (1) Import `use`
 import { use } from "next-api-middleware";
 
+// (2) Pass middleware functions as arguments to `use`, in
+//     the order they should execute. Don't forget the `next` parameter!
 const withMiddleware = use(
-  async function captureErrorsInSentry(req, res, next) {
+  /* Capture errors in Sentry */
+  async function (req, res, next) {
     try {
       // Let request continue
       await next();
@@ -44,7 +51,8 @@ const withMiddleware = use(
       res.json({ error: err.message });
     }
   },
-  function onlyGetRequests(req, res, next) {
+  /* Only allow GET requests */
+  function (req, res, next) {
     if (req.method === "GET") {
       // Let GET requests continue
       return next();
@@ -54,7 +62,8 @@ const withMiddleware = use(
       res.send("Not found");
     }
   },
-  async function connectDatabase(req, res, next) {
+  /* Load and destroy a database connection */
+  async function (req, res, next) {
     // Load database before request
     req.local.db = await loadYourDatabase();
 
@@ -66,22 +75,19 @@ const withMiddleware = use(
   }
 );
 
-const apiHandler = async (req, res) => {
-  const { user } = req.locals;
+/* API route handler */
+const apiRouteHandler = async (req, res) => {
   res.status(200);
-  res.send(`${user.name} is ${user.age} old!`);
+  res.send("Hello, world!");
 };
 
-export default withMiddleware(apiHandler);
+// (3) Apply the middleware to the API route handler
+export default withMiddleware(apiRouteHandler);
 ```
 
 ## Usage
 
-1. [Create Middleware Functions](#create-middleware-functions)
-2. [Compose Reusable Groups](#compose-reusable-groups)
-3. [Apply Middleware to API Routes](#apply-middleware-to-api-routes)
-
-### 1. Create Middleware Functions
+### :two:ne: Create Middleware Functions
 
 ```ts
 /* lib/middleware/helpers.js */
@@ -128,7 +134,7 @@ Let's walk through each of these functions to better understand what happens whe
 
 **Note: Always `return` or `await` the \`next\` function, otherwise requests will time out.**
 
-### 2. Compose Reusable Groups
+### :two: Compose Reusable Groups
 
 ```js
 /* lib/middleware/groups.js */
@@ -164,7 +170,7 @@ The `use` function creates a higher order function (HOC) that can be used to app
 
 It also accepts arrays of middleware functions, which makes it trivial to add certain middleware conditionally. In both `useGuestMiddleware` and `useAuthMiddleware`, the `isProduction` variable determined whether or not the request timing and error tracking middleware are included.
 
-### 3. Apply Middleware to API Routes
+### :three: Apply Middleware to API Routes
 
 To apply a middleware group to an API route, just import it and provide the API route handler as an argument:
 
