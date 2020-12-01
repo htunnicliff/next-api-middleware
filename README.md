@@ -10,6 +10,7 @@
   <a href="https://github.com/htunnicliff/next-api-middleware/actions">
     <img alt="GitHub tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Main?style=for-the-badge&labelColor=000000&label=Tests">
   </a>
+  <img alt="Codecov" src="https://img.shields.io/codecov/c/github/htunnicliff/next-api-middleware?style=for-the-badge&labelColor=000000&token=XI7G8L08TY">
 <p>
 
 ## Introduction
