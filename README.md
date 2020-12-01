@@ -20,7 +20,7 @@
 
 The official Next.js docs recommend writing functions [inside your API route handler](https://nextjs.org/docs/api-routes/api-middlewares) :thumbsdown:. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
 
-This library attempts to provide minimal, clean, composable middleware patterns that are both productive and pleasant to use. :tada
+This library attempts to provide minimal, clean, composable middleware patterns that are both productive and pleasant to use. :tada:
 
 ## Quick Start
 
@@ -87,7 +87,7 @@ export default withMiddleware(apiRouteHandler);
 
 ## Usage
 
-### :two:ne: Create Middleware Functions
+### :one: Create Middleware Functions
 
 ```ts
 /* lib/middleware/helpers.js */
@@ -188,7 +188,7 @@ export default withGuestMiddleware(apiHandler);
 
 ## Advanced
 
-## Middleware Factories
+### Middleware Factories
 
 Since `use` accepts values that _evaluate_ to middleware functions, this provides the opportunity to create custom middleware factories: functions that create middleware.
 
