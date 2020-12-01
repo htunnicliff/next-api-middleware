@@ -12,7 +12,7 @@
   </a>
 <p>
 
-:warning: _** Warning: This library is in alpha, so APIs may change at any time.**_
+:warning: **Warning: This library is in alpha, so APIs may change at any time.**
 
 ## Introduction
 
