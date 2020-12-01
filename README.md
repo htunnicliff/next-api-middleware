@@ -23,64 +23,52 @@ This library attempts to provide minimal, clean, composable middleware patterns 
 ## Quick Start
 
 ```js
-/* pages/api/hello-world.js */
-
-// (1) Import `use`
 import { use } from "next-api-middleware";
 
-// (2) Pass middleware functions as arguments to `use`, in
-//     the order they should execute. Don't forget the `next` parameter!
-const withMiddleware = use(
-  /* Capture errors in Sentry */
-  async function (req, res, next) {
-    try {
-      // Let request continue
-      await next();
-    } catch (err) {
-      // Add request URL to Sentry context
-      Sentry.setTag("url", req.url);
-
-      // Capture error in Sentry
-      Sentry.captureException(err);
-      await Sentry.flush(2000);
-
-      // Send error response
-      res.status(500);
-      res.json({ error: err.message });
-    }
-  },
-  /* Only allow GET requests */
-  function (req, res, next) {
-    if (req.method === "GET") {
-      // Let GET requests continue
-      return next();
-    } else {
-      // Send not found
-      res.status(404);
-      res.send("Not found");
-    }
-  },
-  /* Load and destroy a database connection */
-  async function (req, res, next) {
-    // Load database before request
-    req.local.db = await loadYourDatabase();
-
-    // Let request continue
+const middleware = use(
+  async (req, res, next) => {
+    console.log("Do work before the request");
     await next();
+    console.log("Clean up");
+  },
 
-    // Clean up database after request
-    await req.local.database.destroy();
+  async (req, res, next) => {
+    console.log("Do more work");
+    await next();
+    console.log("Clean up more");
+  },
+
+  (req, res, next) => {
+    console.log("Store user in request");
+    req.locals = {
+      user: {
+        name: "Alice",
+        email: "alice@example.com",
+      },
+    };
+
+    return next();
   }
 );
 
-/* API route handler */
 const apiRouteHandler = async (req, res) => {
+  const { name } = req.locals.user;
+
   res.status(200);
-  res.send("Hello, world!");
+  res.send(`Hello, ${name}!`);
 };
 
-// (3) Apply the middleware to the API route handler
-export default withMiddleware(apiRouteHandler);
+export default middleware(apiRouteHandler);
+
+/**
+ * Console output:
+ *
+ *   Do work before the request
+ *   Do more work
+ *   Store user in request
+ *   Clean up more
+ *   Clean up
+ */
 ```
 
 ## Usage
