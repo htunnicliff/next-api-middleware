@@ -1,26 +1,27 @@
-import {
-  hasMiddlewareSignature,
-  use,
-  label,
-  makeMiddlewareExecutor,
-} from "./index";
+import { isValidMiddleware, use, label, makeMiddlewareExecutor } from "./index";
 
-describe("hasMiddlewareSignature", () => {
+describe("isValidMiddleware", () => {
   it("returns false for invalid input", () => {
-    expect(hasMiddlewareSignature(NaN)).toBe(false);
-    expect(hasMiddlewareSignature(0)).toBe(false);
-    expect(hasMiddlewareSignature({})).toBe(false);
-    expect(hasMiddlewareSignature(Function)).toBe(false);
-    expect(hasMiddlewareSignature([])).toBe(false);
-    expect(hasMiddlewareSignature(false)).toBe(false);
-    expect(hasMiddlewareSignature(true)).toBe(false);
-    expect(hasMiddlewareSignature("")).toBe(false);
-    expect(hasMiddlewareSignature((arg1, arg2) => {})).toBe(false);
-    expect(hasMiddlewareSignature((arg1, arg2, arg3, arg4) => {})).toBe(false);
+    expect(isValidMiddleware(NaN)).toBe(false);
+    expect(isValidMiddleware(0)).toBe(false);
+    expect(isValidMiddleware({})).toBe(false);
+    expect(isValidMiddleware(Function)).toBe(false);
+    expect(isValidMiddleware([])).toBe(false);
+    expect(isValidMiddleware(false)).toBe(false);
+    expect(isValidMiddleware(true)).toBe(false);
+    expect(isValidMiddleware("")).toBe(false);
+    expect(isValidMiddleware((arg1, arg2) => {})).toBe(false);
+    expect(isValidMiddleware((arg1, arg2, arg3, arg4) => {})).toBe(false);
   });
 
   it("returns true for valid input", () => {
-    expect(hasMiddlewareSignature((arg1, arg2, arg3) => {})).toBe(true);
+    expect(isValidMiddleware((arg1, arg2, arg3) => {})).toBe(true);
+  });
+
+  it("throws errors for invalid input when throwOnError is enabled", () => {
+    expect(() => isValidMiddleware("", true)).toThrowError(
+      "Invalid middleware"
+    );
   });
 });
 
@@ -101,6 +102,27 @@ describe("label", () => {
 
     expect(middleware1).toBeCalled();
     expect(handler).toBeCalled();
+  });
+
+  it("throws errors for invalid middleware", async () => {
+    const middleware = label({
+      normal: (req, res, next) => next(),
+    });
+
+    // @ts-ignore
+    expect(() => middleware("normal", [(a, b) => {}])).toThrowError(
+      "Invalid middleware"
+    );
+
+    // @ts-ignore
+    expect(() => middleware("normal", (a, b) => {})).toThrowError(
+      "Invalid middleware"
+    );
+
+    // @ts-ignore
+    expect(() => middleware("missing")).toThrowError(
+      'Middleware "missing" not available'
+    );
   });
 });
 

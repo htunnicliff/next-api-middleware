@@ -17,9 +17,7 @@ export function use(...middleware: (Middleware | Middleware[])[]) {
   const middlewareFns = middleware.flat();
 
   // Check signatures
-  if (middlewareFns.some((fn) => !hasMiddlewareSignature(fn))) {
-    throw new Error("Invalid middleware functions");
-  }
+  isValidMiddlewareArray(middlewareFns, true);
 
   // Make executor
   return makeMiddlewareExecutor(middlewareFns);
@@ -30,13 +28,7 @@ export function label<T extends LabeledMiddleware>(
   defaults: (keyof T)[] = []
 ) {
   // Check signatures
-  if (
-    Object.values(middleware)
-      .flat()
-      .some((fn) => !hasMiddlewareSignature(fn))
-  ) {
-    throw new Error("Invalid middleware function(s)");
-  }
+  isValidMiddlewareArray(Object.values(middleware).flat(), true);
 
   // Receive chosen middleware (either names or literal middleware functions)
   return function curryMiddlewareChoices(
@@ -46,11 +38,8 @@ export function label<T extends LabeledMiddleware>(
 
     // Load middleware for each choice
     for (const choice of [...defaults, ...chosenMiddleware]) {
-      if (hasMiddlewareSignature(choice)) {
-        // Choice is a middleware function, add directly to array
-        middlewareFns.push(choice);
-      } else {
-        // Choice is the name of a registered function, get from registered middleware
+      // Choice is the name of a registered function, get from registered middleware
+      if (typeof choice === "string") {
         const fn = middleware[choice];
         if (!fn) {
           throw new Error(`Middleware "${choice}" not available`);
@@ -58,6 +47,19 @@ export function label<T extends LabeledMiddleware>(
 
         // Add middleware function or group to array
         middlewareFns.push(...(Array.isArray(fn) ? fn : [fn]));
+        continue;
+      }
+
+      if (Array.isArray(choice) && isValidMiddlewareArray(choice, true)) {
+        // Choice is an array of middleware functions
+        middlewareFns.push(...choice);
+        continue;
+      }
+
+      if (isValidMiddleware(choice, true)) {
+        // Choice is a middleware function, add directly to array
+        middlewareFns.push(choice);
+        continue;
       }
     }
 
@@ -85,6 +87,23 @@ export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
 /**
  * @private
  */
-export function hasMiddlewareSignature(input: unknown): input is Middleware {
-  return typeof input === "function" && input.length === 3;
+export function isValidMiddleware(
+  input: unknown,
+  throwOnFailure = false
+): input is Middleware {
+  const valid = typeof input === "function" && input.length === 3;
+  if (!valid && throwOnFailure) {
+    throw new Error("Invalid middleware");
+  }
+  return valid;
+}
+
+/**
+ * @private
+ */
+export function isValidMiddlewareArray(
+  input: unknown[],
+  throwOnFailure = false
+): input is Middleware[] {
+  return input.every((item) => isValidMiddleware(item, throwOnFailure));
 }
