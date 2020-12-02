@@ -32,7 +32,7 @@ export function label<T extends LabeledMiddleware>(
 
   // Receive chosen middleware (either names or literal middleware functions)
   return function curryMiddlewareChoices(
-    ...chosenMiddleware: (keyof T | Middleware)[]
+    ...chosenMiddleware: (keyof T | Middleware | Middleware[])[]
   ) {
     const middlewareFns: Middleware[] = [];
 

@@ -1,4 +1,10 @@
-import { isValidMiddleware, use, label, makeMiddlewareExecutor } from "./index";
+import {
+  isValidMiddleware,
+  use,
+  label,
+  makeMiddlewareExecutor,
+  Middleware,
+} from "./index";
 
 describe("isValidMiddleware", () => {
   it("returns false for invalid input", () => {
@@ -33,7 +39,7 @@ describe("use", () => {
 
 describe("label", () => {
   it("throws an error for invalid middleware", () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect(() => label({ notMiddleware: NaN })).toThrowError();
   });
 
@@ -109,20 +115,48 @@ describe("label", () => {
       normal: (req, res, next) => next(),
     });
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(() => middleware("normal", [(a, b) => {}])).toThrowError(
       "Invalid middleware"
     );
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(() => middleware("normal", (a, b) => {})).toThrowError(
       "Invalid middleware"
     );
 
-    // @ts-ignore
+    // @ts-expect-error
     expect(() => middleware("missing")).toThrowError(
       'Middleware "missing" not available'
     );
+  });
+
+  it("adds groups to final executed middleware", async () => {
+    const m0: Middleware = jest.fn((req, res, next) => next());
+    const m1: Middleware = jest.fn((req, res, next) => next());
+    const m2: Middleware = jest.fn((req, res, next) => next());
+
+    const middleware = label({
+      m0,
+    });
+
+    await middleware([m1, m2], "m0")(jest.fn())({} as any, {} as any);
+    expect(m1).toBeCalled();
+    expect(m2).toBeCalled();
+    expect(m0).toBeCalled();
+  });
+
+  it("executes inline middleware", async () => {
+    const middleware = label({});
+
+    const inlineFn = jest.fn((req, res, next) => next());
+
+    await middleware(inlineFn, inlineFn, inlineFn)(jest.fn())(
+      {} as any,
+      {} as any
+    );
+
+    expect(inlineFn).toBeCalledTimes(3);
   });
 });
 
