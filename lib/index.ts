@@ -4,8 +4,8 @@ export interface Middleware {
   (
     req: NextApiRequest,
     res: NextApiResponse,
-    next: () => Promise<void>
-  ): Promise<void>;
+    next: () => void | Promise<void>
+  ): void | Promise<void>;
 }
 
 export interface LabeledMiddleware {
