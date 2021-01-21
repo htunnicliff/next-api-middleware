@@ -22,6 +22,7 @@ describe("isValidMiddleware", () => {
 
   it("returns true for valid input", () => {
     expect(isValidMiddleware((arg1, arg2, arg3) => {})).toBe(true);
+    expect(isValidMiddleware(async (arg1, arg2, arg3) => {})).toBe(true);
   });
 
   it("throws errors for invalid input when throwOnError is enabled", () => {
@@ -115,12 +116,10 @@ describe("label", () => {
       normal: (req, res, next) => next(),
     });
 
-    // @ts-expect-error
     expect(() => middleware("normal", [(a, b) => {}])).toThrowError(
       "Invalid middleware"
     );
 
-    // @ts-expect-error
     expect(() => middleware("normal", (a, b) => {})).toThrowError(
       "Invalid middleware"
     );
