@@ -26,7 +26,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "prepare": "rm -rf dist && npm run build"
+    "preversion": "npm test",
+    "version": "rm -rf dist && npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
