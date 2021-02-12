@@ -7,8 +7,11 @@
     "outDir": "dist",
     "rootDir": "lib",
     "declaration": true,
+    "strict": true,
+    "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "skipLibCheck": true
   },
   "include": ["lib"],
   "exclude": ["node_modules", "lib/**/*.spec.ts"]
