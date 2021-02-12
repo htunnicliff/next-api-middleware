@@ -1,12 +1,26 @@
+import type { IncomingMessage, ServerResponse } from "http";
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-export interface Middleware {
+export interface NextMiddleware {
   (
     req: NextApiRequest,
     res: NextApiResponse,
     next: () => Promise<void>
   ): Promise<void>;
 }
+
+export interface ExpressMiddleware<
+  Request = IncomingMessage,
+  Response = ServerResponse
+> {
+  (
+    req: Request,
+    res: Response,
+    next: (error?: any) => void | Promise<void>
+  ): void;
+}
+
+export type Middleware = NextMiddleware | ExpressMiddleware;
 
 export interface LabeledMiddleware {
   [name: string]: Middleware | Middleware[];
@@ -74,10 +88,20 @@ export function label<T extends LabeledMiddleware>(
 export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
   return function curryApiHandler(apiRouteFn: NextApiHandler): NextApiHandler {
     return async function finalRouteHandler(req, res) {
-      const execute = ([currentFn, ...remaining]: Middleware[]) =>
-        currentFn(req, res, async () =>
-          remaining.length === 0 ? apiRouteFn(req, res) : execute(remaining)
-        );
+      const execute = ([
+        currentFn,
+        ...remaining
+      ]: Middleware[]): void | Promise<void> => {
+        return currentFn(req, res, async (err?: any) => {
+          if (err) {
+            throw err;
+          }
+
+          return remaining.length === 0
+            ? apiRouteFn(req, res)
+            : execute(remaining);
+        });
+      };
 
       return execute(middlewareFns);
     };

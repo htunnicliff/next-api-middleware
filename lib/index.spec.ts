@@ -1,9 +1,9 @@
 import {
   isValidMiddleware,
-  use,
   label,
   makeMiddlewareExecutor,
   Middleware,
+  use,
 } from "./index";
 
 describe("isValidMiddleware", () => {
@@ -115,12 +115,10 @@ describe("label", () => {
       normal: (req, res, next) => next(),
     });
 
-    // @ts-expect-error
     expect(() => middleware("normal", [(a, b) => {}])).toThrowError(
       "Invalid middleware"
     );
 
-    // @ts-expect-error
     expect(() => middleware("normal", (a, b) => {})).toThrowError(
       "Invalid middleware"
     );
@@ -176,7 +174,11 @@ describe("makeMiddlewareExecutor", () => {
       log.push("2 teardown");
     });
     const middleware3 = jest.fn((req, res, next) => {
-      log.push("3 setup");
+      log.push("3 express-style middleware setup");
+      next();
+    });
+    const middleware4 = jest.fn((req, res, next) => {
+      log.push("4 setup");
       return next();
     });
 
@@ -185,9 +187,12 @@ describe("makeMiddlewareExecutor", () => {
     });
 
     // Execute executor (haha)
-    await makeMiddlewareExecutor([middleware1, middleware2, middleware3])(
-      handler
-    )({} as any, {} as any);
+    await makeMiddlewareExecutor([
+      middleware1,
+      middleware2,
+      middleware3,
+      middleware4,
+    ])(handler)({} as any, {} as any);
 
     // Make assertions
     expect(middleware1).toBeCalled();
@@ -198,7 +203,8 @@ describe("makeMiddlewareExecutor", () => {
       [
         "1 setup",
         "2 setup",
-        "3 setup",
+        "3 express-style middleware setup",
+        "4 setup",
         "handler",
         "2 teardown",
         "1 teardown",
