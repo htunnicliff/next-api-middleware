@@ -27,21 +27,21 @@ This library attempts to provide minimal, clean, composable middleware patterns 
 
 ```js
 import { use } from "next-api-middleware";
+import cors from "cors";
 
-const middleware = use(
+const withMiddleware = use(
   async (req, res, next) => {
     console.log("Do work before the request");
     await next();
     console.log("Clean up");
   },
-
   async (req, res, next) => {
     console.log("Do more work");
     await next();
     console.log("Clean up more");
   },
-
-  (req, res, next) => {
+  cors(), // <---- Invoke Express/Connect middleware like any other middleware
+  async (req, res, next) => {
     console.log("Store user in request");
     req.locals = {
       user: {
@@ -50,7 +50,7 @@ const middleware = use(
       },
     };
 
-    return next();
+    await next();
   }
 );
 
@@ -61,13 +61,14 @@ const apiRouteHandler = async (req, res) => {
   res.send(`Hello, ${name}!`);
 };
 
-export default middleware(apiRouteHandler);
+export default withMiddleware(apiRouteHandler);
 
 /**
  * Console output:
  *
  *   Do work before the request
  *   Do more work
+ *   cors
  *   Store user in request
  *   Clean up more
  *   Clean up
@@ -76,23 +77,33 @@ export default middleware(apiRouteHandler);
 
 ## Usage
 
-### :one: Create Middleware Functions
+### Writing Async Middleware
 
 ```ts
-import type { Middleware } from "next-api-middleware";
+import type { NextMiddleware } from "next-api-middleware";
 
-export const addRequestUUID: Middleware = (req, res, next) => {
+/**
+ * Middleware that does work before a request
+ */
+export const addRequestUUID: NextMiddleware = async (req, res, next) => {
   res.setHeader("X-Response-ID", uuid());
-  return next();
+  await next();
 };
 
-export const addRequestTiming: Middleware = async (req, res, next) => {
+/**
+ * Middleware that does work before *and* after a request
+ */
+export const addRequestTiming: NextMiddleware = async (req, res, next) => {
   res.setHeader("X-Timing-Start", new Date().getTime());
   await next();
   res.setHeader("X-Timing-End", new Date().getTime());
 };
 
-export const logErrorsWithACME: Middleware = async (req, res, next) => {
+/**
+ * Middleware that catches errors that occur in remaining middleware
+ * and the request
+ */
+export const logErrorsWithACME: NextMiddleware = async (req, res, next) => {
   try {
     await next();
   } catch (error) {
@@ -103,7 +114,7 @@ export const logErrorsWithACME: Middleware = async (req, res, next) => {
 };
 ```
 
-### :two: Compose Reusable Groups
+### Composing Middleware Groups
 
 ```js
 import { use } from "next-api-middleware";
@@ -114,7 +125,7 @@ import {
 } from "../helpers";
 import { connectDatabase, loadUsers } from "../users";
 
-export const authMiddleware = use(
+export const withAuthMiddleware = use(
   addRequestTiming,
   logErrorsWithACME,
   addRequestUUID,
@@ -122,12 +133,12 @@ export const authMiddleware = use(
   loadUsers
 );
 
-export const guestMiddleware = use(
+export const withGuestMiddleware = use(
   isProduction ? [addRequestTiming, logErrorsWithACME] : [],
   addRequestUUID
 );
 
-export const otherMiddleware = use(
+export const withXYZMiddleware = use(
   [addRequestUUID, connectDatabase, loadUsers],
   [addRequestTiming, logErrorsWithACME]
 );
@@ -145,11 +156,15 @@ import {
   addRequestUUID,
 } from "../helpers";
 
-const middleware = label(
+const withMiddleware = label(
   timing: addRequestTiming,
   logErrors: logErrorsWithACME,
   uuids: addRequestUUID,
-  all: [addRequestTiming, logErrorsWithACME, addRequestUUID]
+  all: [
+    addRequestTiming,
+    logErrorsWithACME,
+    addRequestUUID
+  ]
 );
 
 const apiRouteHandler = async (req, res) => {
@@ -160,12 +175,12 @@ const apiRouteHandler = async (req, res) => {
 };
 
 // Invokes `addRequestTiming` and `logErrorsWithACME`
-export default middleware(["timing", "logErrors"])(apiRouteHandler);
+export default withMiddleware("timing", "logErrors")(apiRouteHandler);
 ```
 
 Using `label` creates a middleware group that, by default, doesn't invoke any middleware. Instead, it allows choosing specific middleware by supplying labels as arguments in the API route.
 
-### :three: Apply Middleware to API Routes
+### Apply Middleware to API Routes
 
 To apply a middleware group to an API route, just import it and provide the API route handler as an argument:
 
@@ -179,8 +194,6 @@ const apiHandler = async (req, res) => {
 
 export default withGuestMiddleware(apiHandler);
 ```
-
-## Advanced
 
 ### Middleware Factories
 
