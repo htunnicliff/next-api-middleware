@@ -1,41 +1,5 @@
-import {
-  isValidMiddleware,
-  label,
-  makeMiddlewareExecutor,
-  Middleware,
-  use,
-} from "./index";
-
-describe("isValidMiddleware", () => {
-  it("returns false for invalid input", () => {
-    expect(isValidMiddleware(NaN)).toBe(false);
-    expect(isValidMiddleware(0)).toBe(false);
-    expect(isValidMiddleware({})).toBe(false);
-    expect(isValidMiddleware(Function)).toBe(false);
-    expect(isValidMiddleware([])).toBe(false);
-    expect(isValidMiddleware(false)).toBe(false);
-    expect(isValidMiddleware(true)).toBe(false);
-    expect(isValidMiddleware("")).toBe(false);
-    expect(isValidMiddleware((arg1, arg2) => {})).toBe(false);
-    expect(isValidMiddleware((arg1, arg2, arg3, arg4) => {})).toBe(false);
-  });
-
-  it("returns true for valid input", () => {
-    expect(isValidMiddleware((arg1, arg2, arg3) => {})).toBe(true);
-  });
-
-  it("throws errors for invalid input when throwOnError is enabled", () => {
-    expect(() => isValidMiddleware("", true)).toThrowError(
-      "Invalid middleware"
-    );
-  });
-});
-
-describe("use", () => {
-  it("throws an error for invalid middleware", () => {
-    expect(() => use(() => null)).toThrowError();
-  });
-});
+import { Middleware } from ".";
+import { label } from "./label";
 
 describe("label", () => {
   it("throws an error for invalid middleware", () => {
@@ -155,60 +119,5 @@ describe("label", () => {
     );
 
     expect(inlineFn).toBeCalledTimes(3);
-  });
-});
-
-describe("makeMiddlewareExecutor", () => {
-  it("executes supplied middleware functions in order", async () => {
-    const log = [];
-
-    // Make fake middleware
-    const middleware1 = jest.fn(async (req, res, next) => {
-      log.push("1 setup");
-      await next();
-      log.push("1 teardown");
-    });
-    const middleware2 = jest.fn(async (req, res, next) => {
-      log.push("2 setup");
-      await next();
-      log.push("2 teardown");
-    });
-    const middleware3 = jest.fn((req, res, next) => {
-      log.push("3 express-style middleware setup");
-      next();
-    });
-    const middleware4 = jest.fn((req, res, next) => {
-      log.push("4 setup");
-      return next();
-    });
-
-    const handler = jest.fn((req, res) => {
-      log.push("handler");
-    });
-
-    // Execute executor (haha)
-    await makeMiddlewareExecutor([
-      middleware1,
-      middleware2,
-      middleware3,
-      middleware4,
-    ])(handler)({} as any, {} as any);
-
-    // Make assertions
-    expect(middleware1).toBeCalled();
-    expect(middleware2).toBeCalled();
-    expect(middleware3).toBeCalled();
-    expect(handler).toBeCalled();
-    expect(log.toString()).toBe(
-      [
-        "1 setup",
-        "2 setup",
-        "3 express-style middleware setup",
-        "4 setup",
-        "handler",
-        "2 teardown",
-        "1 teardown",
-      ].toString()
-    );
   });
 });
