@@ -1,16 +1,29 @@
+import { Debugger } from "debug";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { Middleware } from ".";
+import { logger } from "./logger";
 import { controlledPromise, isPromise } from "./promises";
+
+/**
+ * Basic means to count nested levels of middleware
+ */
+let counter = 0;
 
 // This gets invoked internally by `use` and `label`
 export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
+  logger("Registered %d middleware functions", middlewareFns.length);
+
   // This curried function receives an API route
   return function curryApiHandler(apiRouteFn: NextApiHandler): NextApiHandler {
+    logger("Registered Next API Handler");
+
     // The final function returned is a Next API handler that
     // is responsible for executing all the middleware provided,
     // as well as the API route handler
     return async function finalRouteHandler(req, res) {
+      logger("Starting middleware execution");
       await new Executor(middlewareFns, apiRouteFn, req, res).run();
+      counter = 0;
     };
   };
 }
@@ -46,6 +59,11 @@ export class Executor {
    */
   teardownPromise = controlledPromise();
 
+  /**
+   * Utility for logging debug messages
+   */
+  log: Debugger;
+
   constructor(
     [currentFn, ...remaining]: Middleware[],
     public apiRouteFn: NextApiHandler,
@@ -54,6 +72,7 @@ export class Executor {
   ) {
     this.currentFn = currentFn;
     this.remaining = remaining;
+    this.log = logger.extend(`fn-${++counter}`);
   }
 
   /**
@@ -65,10 +84,18 @@ export class Executor {
    * If it succeeds, an executor is created to handle
    * the remaining middleware.
    */
-  run(): Promise<void> {
+  async run(): Promise<void> {
+    const l = this.log;
+
     try {
+      const cleanupPromise = controlledPromise();
+
       // Call the current function
+      l(`Executing middleware "${this.currentFn.name}"`);
       this.result = this.currentFn(this.req, this.res, (error?: any) => {
+        cleanupPromise.resolve();
+        l("Finished cleanup");
+
         // Look for errors from synchronous middleware
         if (error) {
           // Throw errors to be caught in the try/catch block
@@ -85,14 +112,19 @@ export class Executor {
       if (isPromise(this.result)) {
         this.result.then(
           () => {
+            l("Async middleware succeeded");
             this.succeed();
           },
           (err) => {
+            l("Async middleware failed");
             asyncMiddlewareFailed = true;
+            cleanupPromise.resolve();
             this.fail(err);
           }
         );
       }
+
+      await cleanupPromise.promise;
 
       // Use a microtask to give async middleware a chance to fail
       queueMicrotask(() => {
@@ -103,6 +135,7 @@ export class Executor {
       });
     } catch (err) {
       // Catches errors from synchronous middleware
+      l("Caught error from synchronous middleware");
       this.fail(err);
     }
 
@@ -114,10 +147,14 @@ export class Executor {
    * promise if it is available.
    */
   async runRemaining(): Promise<void> {
+    const l = this.log;
+
     try {
       if (this.remaining.length === 0) {
         // No more middleware, execute the API route handler
+        l("Executing API handler");
         await this.apiRouteFn(this.req, this.res);
+        l("Finished executing API handler");
       } else {
         // Recursively execute remaining middleware
         const remainingExecutor = new Executor(
@@ -127,6 +164,7 @@ export class Executor {
           this.res
         );
 
+        l("Running next executor");
         await remainingExecutor.run();
       }
 
@@ -144,13 +182,18 @@ export class Executor {
    * promise as a success.
    */
   finish(error?: any) {
+    const l = this.log;
+    l("Finishing...");
+
     if (isPromise(this.result)) {
       // Current middleware is async
       if (error) {
         // Let the result have a chance to handle the error
+        l("Passing nested error to async middleware");
         this.teardownPromise.reject(error);
       } else {
         // Let the result continue its teardown
+        l("Starting async middleware teardown");
         this.teardownPromise.resolve();
       }
     } else {
@@ -158,10 +201,12 @@ export class Executor {
       if (error) {
         // Synchronous middleware cannot handle errors,
         // trigger a failure
+        l("Failing executor and passing error up");
         this.fail(error);
       } else {
         // Synchronous middleware has no teardown phase,
         // trigger a success
+        l("Synchronous middleware succeeded");
         this.succeed();
       }
     }
