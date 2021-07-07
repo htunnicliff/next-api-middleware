@@ -9,6 +9,8 @@ const config: Config.InitialOptions = {
   coverageReporters: ["text", "json"],
   testEnvironment: "node",
   testMatch: ["**/*.spec.ts"],
+  setupFilesAfterEnv: ["jest-extended"],
+  verbose: true,
 };
 
 export default config;
