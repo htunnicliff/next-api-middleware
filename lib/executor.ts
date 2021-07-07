@@ -21,17 +21,23 @@ export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
         // Call the current middleware
         const result = currentFn(req, res, async (err?: any) => {
           if (err) {
+            // Only Express middleware with errors can reject
             reject(err);
           } else {
-            // Async middleware will pause here until `resolve` is called
+            // Async middleware will pause here until the controlled
+            // promise is resolved.
             await promise;
           }
+
+          // Since Express middleware treats this function as a
+          // callback, it will never be `awaited`.
         });
 
-        // Continue executing middleware
         if (remaining.length === 0) {
+          // Execute API route handler
           await apiRouteFn(req, res);
         } else {
+          // Continue executing middleware
           await execute(remaining);
         }
 
@@ -39,7 +45,7 @@ export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
         // stack should be complete, so let's resolve
         resolve();
 
-        // Wait for the current middlware to finish it's cleanup state
+        // Wait for the current middlware to finish its cleanup state
         await result;
       };
 
