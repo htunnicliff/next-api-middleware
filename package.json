@@ -1,6 +1,6 @@
 {
   "name": "next-api-middleware",
-  "version": "1.0.0-canary.0",
+  "version": "1.0.0-canary.1",
   "description": "Middleware solution for Next.js API routes",
   "repository": "git@github.com:htunnicliff/next-api-middleware.git",
   "author": "Hunter Tunnicliff <htunnicliff@hey.com>",
@@ -36,7 +36,7 @@
     "@types/cors": "^2.8.10",
     "@types/debug": "^4.1.6",
     "@types/jest": "^26.0.24",
-    "@types/node": "^15.0.1",
+    "@types/node": "^16.3.3",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "babel-jest": "^27.0.2",
