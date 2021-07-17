@@ -12,7 +12,8 @@
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "incremental": true
   },
   "include": ["lib"],
   "exclude": ["node_modules", "lib/**/*.spec.ts"]
