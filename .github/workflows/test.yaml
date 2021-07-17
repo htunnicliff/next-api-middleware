@@ -11,20 +11,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
+    name: Test with Node ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
-          node-version: 12.x
-      - run: npm install
-      - run: npm test
+          node-version: ${{ matrix.node }}
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
         env:
           CI: true
       - uses: codecov/codecov-action@v1
         with:
           file: ./coverage/coverage-final.json
-          # flags: unittests
-          # name: codecov-umbrella
           fail_ci_if_error: true
           verbose: true
