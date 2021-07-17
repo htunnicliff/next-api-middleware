@@ -1,17 +1,19 @@
-# Next.js API Middleware
+<p align="center">
+  <h1 align="center">Next.js API Middleware</h1>
+</p>
 
-<p style="text-align: center;">
+<p align="center">
   <a aria-label="npm@latest" href="https://www.npmjs.com/package/next-api-middleware">
     <img alt="npm@latest" src="https://img.shields.io/npm/v/next-api-middleware/latest.svg?style=for-the-badge&labelColor=000000">
   </a>
   <a aria-label="npm@canary" href="https://www.npmjs.com/package/next-api-middleware">
     <img alt="npm@canary" src="https://img.shields.io/npm/v/next-api-middleware/canary.svg?style=for-the-badge&labelColor=000000">
   </a>
-</p>
-<p style="text-align: center;">
   <a aria-label="license" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
+</p>
+<p align="center">
   <a aria-label="tests" href="https://github.com/htunnicliff/next-api-middleware/actions?query=workflow%3ATest">
     <img alt="tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Test?style=for-the-badge&labelColor=000000&label=Tests">
   </a>
