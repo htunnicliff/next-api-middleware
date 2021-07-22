@@ -86,6 +86,9 @@ describe("makeMiddlewareExecutor", () => {
 
       const handler = jest.fn(async (_, __) => {});
 
+      const nestedWaiting1 = jest.fn();
+      const nestedWaiting2 = jest.fn();
+
       const middleware: Middleware[] = [
         (_, __, next) => {
           setup1();
@@ -97,17 +100,28 @@ describe("makeMiddlewareExecutor", () => {
         },
         async (_, __, next) => {
           setup3();
+          await new Promise<void>((resolve) => {
+            setTimeout(() => {
+              nestedWaiting1();
+              resolve();
+            }, 500);
+          });
           await next();
-          teardown1();
+          teardown2();
         },
         (_, __, next) => {
           setup4();
           next();
         },
         async (_, __, next) => {
-          setup1();
           await next();
-          teardown2();
+          teardown1();
+          await new Promise<void>((resolve) => {
+            setTimeout(() => {
+              nestedWaiting2();
+              resolve();
+            }, 500);
+          });
         },
       ];
 
@@ -116,9 +130,11 @@ describe("makeMiddlewareExecutor", () => {
       expect(setup1).toHaveBeenCalledBefore(setup2);
       expect(setup3).toHaveBeenCalledAfter(setup2);
       expect(setup4).toHaveBeenCalledAfter(setup3);
+      expect(setup4).toHaveBeenCalledAfter(nestedWaiting1);
       expect(handler).toHaveBeenCalledAfter(setup4);
-      expect(teardown2).toHaveBeenCalledAfter(handler);
-      expect(teardown1).toHaveBeenCalledAfter(teardown2);
+      expect(teardown1).toHaveBeenCalledAfter(handler);
+      expect(teardown2).toHaveBeenCalledAfter(nestedWaiting2);
+      expect(teardown2).toHaveBeenCalledAfter(teardown1);
     });
   });
 
