@@ -13,7 +13,8 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "incremental": true
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": ["lib"],
   "exclude": ["node_modules", "lib/**/*.spec.ts"]
