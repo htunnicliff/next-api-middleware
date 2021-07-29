@@ -37,7 +37,7 @@
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.24",
-    "@types/node": "^15.14.3",
+    "@types/node": "^15.14.4",
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
     "babel-jest": "^27.0.2",
