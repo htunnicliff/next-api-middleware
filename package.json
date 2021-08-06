@@ -31,9 +31,9 @@
     "version": "rm -rf dist && yarn build"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.9",
-    "@babel/preset-typescript": "^7.13.0",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.24",
