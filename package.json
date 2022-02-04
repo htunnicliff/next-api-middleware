@@ -31,8 +31,8 @@
     "version": "rm -rf dist && yarn build"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.10",
-    "@babel/preset-env": "^7.16.8",
+    "@babel/core": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
@@ -46,7 +46,7 @@
     "jest-extended": "^0.11.5",
     "next": ">=10",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   },
   "dependencies": {
     "debug": "^4.3.3"
