@@ -1,4 +1,4 @@
-import { Middleware } from ".";
+import { Middleware } from "./index.js";
 
 export function isValidMiddleware(
   input: unknown,

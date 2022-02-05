@@ -1,8 +1,7 @@
-import exp from "constants";
 import "jest-extended";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { ExpressMiddleware, Middleware } from ".";
-import { makeMiddlewareExecutor } from "./executor";
+import { Middleware } from "./index.js";
+import { makeMiddlewareExecutor } from "./executor.js";
 
 async function callExecutor(executor: NextApiHandler) {
   const req = {} as NextApiRequest;

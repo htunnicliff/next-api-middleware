@@ -1,5 +1,5 @@
-import { Middleware } from ".";
-import { label } from "./label";
+import { Middleware } from "./index.js";
+import { label } from "./label.js";
 
 describe("label", () => {
   it("throws an error for invalid middleware", () => {
