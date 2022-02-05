@@ -6,8 +6,16 @@
   "repository": "htunnicliff/next-api-middleware",
   "license": "MIT",
   "type": "module",
-  "exports": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./label.js": "./dist/label.js",
+    "./label": "./dist/label.js",
+    "./use.js": "./dist/use.js",
+    "./use": "./dist/use.js",
+    "./validation.js": "./dist/validation.js",
+    "./validation": "./dist/validation.js"
+  },
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
