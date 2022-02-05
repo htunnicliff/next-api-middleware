@@ -25,11 +25,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
     "type-check": "tsc --pretty --noEmit",
     "test": "jest",
     "preversion": "yarn test",
-    "version": "rm -rf dist && yarn build"
+    "version": "yarn build"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
@@ -47,6 +47,7 @@
     "jest-extended": "^0.11.5",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "next": ">=10",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5"
   },
