@@ -1,7 +1,7 @@
 import { ExpressMiddleware, use } from "./index.js";
 import cors from "cors";
-import { IncomingMessage, ServerResponse } from "node:http";
-import { Socket } from "node:net";
+import { IncomingMessage, ServerResponse } from "http";
+import { Socket } from "net";
 
 describe("cors", () => {
   it("works alongside Next Middleware", async () => {
