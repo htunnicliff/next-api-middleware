@@ -60,7 +60,8 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "debug": "^4.3.3"
+    "debug": "^4.3.3",
+    "release": "^6.3.0"
   },
   "peerDependencies": {
     "next": ">=10"
