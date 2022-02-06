@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    name: Build and Test with Node.js ${{ matrix.node }}
+    name: Build and Test (Node.js ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -12,7 +12,8 @@ jobs:
     env:
       CI: true
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
