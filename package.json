@@ -36,8 +36,7 @@
     "build": "rimraf dist && tsc",
     "type-check": "tsc --pretty --noEmit",
     "test": "jest",
-    "preversion": "yarn test",
-    "version": "yarn build"
+    "version": "pnpm test && pnpm build"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
@@ -67,7 +66,6 @@
     "next": ">=10"
   },
   "volta": {
-    "node": "16.13.2",
-    "yarn": "1.22.17"
+    "node": "16.13.2"
   }
 }
