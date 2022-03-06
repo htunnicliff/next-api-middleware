@@ -8,6 +8,9 @@ export default {
   coverageReporters: ["text", "json"],
   testEnvironment: "node",
   testMatch: ["**/*.spec.ts"],
+  transform: {
+    "^.+\\.(t|j)sx?$": ["@swc/jest"],
+  },
   resolver: "jest-ts-webcompat-resolver",
   setupFilesAfterEnv: ["jest-extended"],
   verbose: true,
