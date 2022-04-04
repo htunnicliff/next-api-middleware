@@ -3,8 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export type Middleware<Request = NextApiRequest, Response = NextApiResponse> = (
   req: Request,
   res: Response,
-  next: () => Promise<void>
-) => Promise<void>;
+  next: () => Promise<any>
+) => Promise<any>;
 
 export type LabeledMiddleware<
   Request = NextApiRequest,

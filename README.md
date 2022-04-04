@@ -129,6 +129,8 @@ It is worth noting that although these phases are available to all middleware fu
 
 For example, in error catching middleware you might simply wrap `await next()` in a `try / catch` block. On the other hand, you might have request timing middleware that captures a start time during the setup phase, waits, and then captures a finish time in the teardown phase.
 
+You can also optionally abort the chain by returning a resolved value from your middleware rather than calling `await next()`. If a returned value is detected, `next-api-middleware` will not call the next middleware, nor their API Route Handler. This is useful if you want your middleware to handle the response for your API route.
+
 ## APIs
 
 ### `label`

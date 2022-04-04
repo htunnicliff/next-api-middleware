@@ -10,7 +10,7 @@ export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {
     // is responsible for executing all the middleware provided,
     // as well as the API route handler
     return async function finalRouteHandler(req, res) {
-      await new Executor(middlewareFns, apiRouteFn, req, res).run();
+      return await new Executor(middlewareFns, apiRouteFn, req, res).run();
     };
   };
 }
@@ -29,7 +29,7 @@ export class Executor {
   /**
    * The return value of `currentFn`
    */
-  result?: void | Promise<void>;
+  result?: void | Promise<any>;
 
   /**
    * A controlled promise that is used to manage
@@ -73,7 +73,7 @@ export class Executor {
    * If it succeeds, an executor is created to handle
    * the remaining middleware.
    */
-  async run(): Promise<void> {
+  async run(): Promise<any> {
     try {
       const cleanupPromise = controlledPromise();
 
@@ -91,16 +91,24 @@ export class Executor {
         return this.teardownPromise.promise;
       });
 
-      let asyncMiddlewareFailed = false;
+      let asyncMiddlewareDone = false;
 
       // Add handlers to async middleware, if available
       if (isPromise(this.result)) {
         this.result.then(
-          () => {
+          (result: any) => {
+            // If the middleware returns something other than undefined,
+            // we abort the rest of the promise chain and return
+            if (result !== undefined) {
+              cleanupPromise.resolve();
+              asyncMiddlewareDone = true;
+              this.succeed(result);
+            }
+
             this.succeed();
           },
           (err) => {
-            asyncMiddlewareFailed = true;
+            asyncMiddlewareDone = true;
             cleanupPromise.resolve();
             this.fail(err);
           }
@@ -111,7 +119,7 @@ export class Executor {
 
       // Use a microtask to give async middleware a chance to fail
       queueMicrotask(() => {
-        if (!asyncMiddlewareFailed) {
+        if (!asyncMiddlewareDone) {
           // Things look good so far – execute the rest of the queue
           this.runRemaining();
         }
@@ -128,11 +136,12 @@ export class Executor {
    * Execute the remaining middleware, then resume the result
    * promise if it is available.
    */
-  async runRemaining(): Promise<void> {
+  async runRemaining(): Promise<any> {
+    let response;
     try {
       if (this.remaining.length === 0) {
         // No more middleware, execute the API route handler
-        await this.apiRouteFn(this.req, this.res);
+        response = await this.apiRouteFn(this.req, this.res);
       } else {
         // Recursively execute remaining middleware
         const remainingExecutor = new Executor(
@@ -143,13 +152,13 @@ export class Executor {
           this.stackPosition
         );
 
-        await remainingExecutor.run();
+        response = await remainingExecutor.run();
       }
 
       // The remaining queue is now empty
-      this.finish();
+      this.finish(response);
     } catch (err) {
-      this.finish(err);
+      this.finish(response, err);
     }
   }
 
@@ -159,7 +168,7 @@ export class Executor {
    * middleware is async), or resolving the internal
    * promise as a success.
    */
-  finish(error?: any) {
+  finish(response?: any, error?: any) {
     if (isPromise(this.result)) {
       // Current middleware is async
       if (error) {
@@ -167,7 +176,7 @@ export class Executor {
         this.teardownPromise.reject(error);
       } else {
         // Let the result continue its teardown
-        this.teardownPromise.resolve();
+        this.teardownPromise.resolve(response);
       }
     } else {
       // Current middleware is synchronous
@@ -176,7 +185,7 @@ export class Executor {
         this.fail(error);
       } else {
         // Synchronous middleware has no teardown phase, trigger a success
-        this.succeed();
+        this.succeed(response);
       }
     }
   }
