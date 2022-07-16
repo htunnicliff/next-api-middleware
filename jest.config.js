@@ -2,7 +2,7 @@
 export default {
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["lib/**"],
+  collectCoverageFrom: ["lib/**", "!lib/index.ts", "!lib/types.ts"],
   coverageDirectory: "coverage",
   coverageProvider: "v8",
   coverageReporters: ["text", "json"],
