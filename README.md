@@ -36,20 +36,18 @@ This library attempts to provide minimal, clean, composable middleware patterns 
 - [Advanced](#advanced)
   - [Debugging](#debugging)
   - [Middleware Factories](#middleware-factories)
-  - [Middleware Types](#middleware-types)
-    - [`NextMiddleware`](#nextmiddleware-preferred)
-    - [`ExpressMiddleware`](#expressmiddleware-compatibility)
+  - [Middleware Signature](#middleware-types)
 
 ## Quick Start
 
 ```ts
-import { label, NextMiddleware } from "next-api-middleware";
+import { label, Middleware } from "next-api-middleware";
 import * as Sentry from "@sentry/nextjs";
 import nanoid from "nanoid";
 
 // 1 – Create middleware functions
 
-const captureErrors: NextMiddleware = async (req, res, next) => {
+const captureErrors: Middleware = async (req, res, next) => {
   try {
     // Catch any errors that are thrown in remaining
     // middleware and the API route handler
@@ -62,7 +60,7 @@ const captureErrors: NextMiddleware = async (req, res, next) => {
   }
 };
 
-const addRequestId: NextMiddleware = async (req, res, next) => {
+const addRequestId: Middleware = async (req, res, next) => {
   // Let remaining middleware and API route execute
   await next();
 
@@ -293,11 +291,11 @@ Since `use` and `label` accept values that evaluate to middleware functions, thi
 Here's an example of a factory that generates a middleware function to only allow requests with a given HTTP method:
 
 ```ts
-import { NextMiddleware } from "next-api-middleware";
+import { Middleware } from "next-api-middleware";
 
 const httpMethod = (
   allowedHttpMethod: "GET" | "POST" | "PATCH"
-): NextMiddleware => {
+): Middleware => {
   return async function (req, res, next) {
     if (req.method === allowedHttpMethod || req.method == "OPTIONS") {
       await next();
@@ -311,50 +309,14 @@ const httpMethod = (
 export const postRequestsOnlyMiddleware = httpMethod("POST");
 ```
 
-### Middleware Types
+### Middleware Signature
 
-`next-api-middleware` supports two middleware signatures, `NextMiddleware` and `ExpressMiddleware`.
-
-#### `NextMiddleware`
-
-`NextMiddleware` is inspired by the asyncronous middleware style popularized by Koa.js. Prefer this style when writing your own middleware.
+`Middleware` is inspired by the asyncronous middleware style popularized by Koa.js.
 
 ```ts
-interface NextMiddleware {
-  (
-    req: NextApiRequest,
-    res: NextApiResponse,
-    next: () => Promise<void>
-  ): Promise<void>;
-}
-```
-
-#### `ExpressMiddleware` (compatibility)
-
-`ExpressMiddleware` roughly matches the signature used by Express/Connect style middleware. This type can be used when importing third-party libraries such as `cors`.
-
-```ts
-interface ExpressMiddleware<
-  Request = IncomingMessage,
-  Response = ServerResponse
-> {
-  (
-    req: Request,
-    res: Response,
-    next: (error?: any) => void | Promise<void>
-  ): void;
-}
-```
-
-An example using `cors`:
-
-```ts
-import { use } from "next-api-middleware";
-import cors from "cors";
-
-export const withMiddleware = use(
-  // Asserting express/connect middleware as an `ExpressMiddleware` interface
-  // can resolve type conflicts by libraries that provide their own types.
-  cors() as ExpressMiddleware
-);
+type Middleware<Request = NextApiRequest, Response = NextApiResponse> = (
+  req: Request,
+  res: Response,
+  next: () => Promise<void>
+) => Promise<void>;
 ```

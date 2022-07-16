@@ -5,9 +5,9 @@
 Middleware that does work before a request:
 
 ```ts
-import type { NextMiddleware } from "next-api-middleware";
+import type { Middleware } from "next-api-middleware";
 
-export const addRequestUUID: NextMiddleware = async (req, res, next) => {
+export const addRequestUUID: Middleware = async (req, res, next) => {
   // Set a custom header
   res.setHeader("X-Response-ID", uuid());
 
@@ -34,7 +34,7 @@ export const addRequestTiming = async (req, res, next) => {
 Middleware that catches errors that occur in remaining middleware _and_ the request:
 
 ```ts
-export const logErrorsWithACME: NextMiddleware = async (req, res, next) => {
+export const logErrorsWithACME: Middleware = async (req, res, next) => {
   try {
     // Catch any errors that are thrown in remaining
     // middleware and the API route handler
