@@ -3,7 +3,6 @@ lockfileVersion: 5.4
 specifiers:
   '@swc/core': ^1.2.148
   '@swc/jest': ^0.2.20
-  '@types/debug': ^4.1.7
   '@types/jest': ^26.0.24
   '@types/node': ^16.11.26
   jest: ^27.5.1
@@ -16,7 +15,6 @@ specifiers:
 devDependencies:
   '@swc/core': 1.2.148
   '@swc/jest': 0.2.20_@swc+core@1.2.148
-  '@types/debug': 4.1.7
   '@types/jest': 26.0.24
   '@types/node': 16.11.26
   jest: 27.5.1
@@ -954,12 +952,6 @@ packages:
       '@babel/types': 7.17.0
     dev: true
 
-  /@types/debug/4.1.7:
-    resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
-    dependencies:
-      '@types/ms': 0.7.31
-    dev: true
-
   /@types/graceful-fs/4.1.5:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
     dependencies:
@@ -994,10 +986,6 @@ packages:
     dependencies:
       jest-diff: 26.6.2
       pretty-format: 26.6.2
-    dev: true
-
-  /@types/ms/0.7.31:
-    resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
   /@types/node/16.11.26:

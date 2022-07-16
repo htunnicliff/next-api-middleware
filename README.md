@@ -34,7 +34,6 @@ This library attempts to provide minimal, clean, composable middleware patterns 
   - [`use`](#use)
 - [Usage Guide](#usage-guide)
 - [Advanced](#advanced)
-  - [Debugging](#debugging)
   - [Middleware Factories](#middleware-factories)
   - [Middleware Signature](#middleware-types)
 
@@ -258,31 +257,6 @@ export default use(cors())(apiRouteThatOnlyNeedsCORS);
 See [EXAMPLES.md](./EXAMPLES.md) for more detailed examples of `label` and `use`.
 
 ## Advanced
-
-### Debugging
-
-`next-api-middleware` uses [`debug`](https://npmjs.com/package/debug) to provide different levels of debug logging.
-
-Logs for this library are available under the `middleware` namespace.
-
-> These example commands assume the presence of a script called `dev` in your project's `package.json` that runs `next dev`.
-
-```sh
-# Show all logs
-DEBUG=middleware:* npm run dev
-
-# Show all logs for the `/api/foo` route
-DEBUG=middleware:/api/foo npm run dev
-
-# Show all logs for the 3rd middleware function in `/api/foo`
-DEBUG=middleware:/api/foo:fn-3 npm run dev
-```
-
-You can also wrap the value of `DEBUG` in quotes if desired:
-
-```sh
-DEBUG='middleware:/api/foo' npm run dev
-```
 
 ### Middleware Factories
 

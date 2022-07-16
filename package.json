@@ -36,7 +36,6 @@
   "devDependencies": {
     "@swc/core": "^1.2.148",
     "@swc/jest": "^0.2.20",
-    "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.11.26",
     "jest": "^27.5.1",
