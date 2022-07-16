@@ -36,11 +36,9 @@
   "devDependencies": {
     "@swc/core": "^1.2.148",
     "@swc/jest": "^0.2.20",
-    "@types/cors": "^2.8.12",
     "@types/debug": "^4.1.7",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.11.26",
-    "cors": "^2.8.5",
     "jest": "^27.5.1",
     "jest-extended": "^0.11.5",
     "jest-ts-webcompat-resolver": "^1.0.0",
