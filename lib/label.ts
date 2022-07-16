@@ -1,4 +1,4 @@
-import { LabeledMiddleware, Middleware } from ".";
+import { LabeledMiddleware, Middleware } from "./types";
 import { makeMiddlewareExecutor } from "./executor";
 import { isValidMiddleware, isValidMiddlewareArray } from "./validation";
 

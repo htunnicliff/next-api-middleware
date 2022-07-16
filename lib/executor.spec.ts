@@ -1,6 +1,6 @@
 import "jest-extended";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { Middleware } from ".";
+import { Middleware } from "./types";
 import { makeMiddlewareExecutor } from "./executor";
 
 async function callExecutor(executor: NextApiHandler) {

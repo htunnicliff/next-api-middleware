@@ -1,4 +1,4 @@
-import { Middleware } from ".";
+import { Middleware } from "./types";
 import { label } from "./label";
 
 describe("label", () => {
@@ -8,7 +8,7 @@ describe("label", () => {
   });
 
   it("calls labeled middleware in order", async () => {
-    const log = [];
+    const log: string[] = [];
 
     // Setup middleware
     const middleware1 = jest.fn((req, res, next) => next());

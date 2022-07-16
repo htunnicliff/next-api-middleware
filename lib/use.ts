@@ -1,4 +1,4 @@
-import { Middleware } from ".";
+import { Middleware } from "./types";
 import { makeMiddlewareExecutor } from "./executor";
 import { isValidMiddlewareArray } from "./validation";
 

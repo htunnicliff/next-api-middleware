@@ -1,4 +1,4 @@
-import { Middleware } from ".";
+import { Middleware } from "./types";
 
 export function isValidMiddleware(
   input: unknown,
