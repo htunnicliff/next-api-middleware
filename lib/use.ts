@@ -1,6 +1,6 @@
-import { Middleware } from "./index.js";
-import { makeMiddlewareExecutor } from "./executor.js";
-import { isValidMiddlewareArray } from "./validation.js";
+import { Middleware } from ".";
+import { makeMiddlewareExecutor } from "./executor";
+import { isValidMiddlewareArray } from "./validation";
 
 export function use(...middleware: (Middleware | Middleware[])[]) {
   // Flatten middleware groups

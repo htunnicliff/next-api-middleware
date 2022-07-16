@@ -1,4 +1,4 @@
-import { ExpressMiddleware, use } from "./index.js";
+import { ExpressMiddleware, use } from ".";
 import cors from "cors";
 import { IncomingMessage, ServerResponse } from "http";
 import { Socket } from "net";

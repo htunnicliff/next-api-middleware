@@ -1,6 +1,6 @@
-import { LabeledMiddleware, Middleware } from "./index.js";
-import { makeMiddlewareExecutor } from "./executor.js";
-import { isValidMiddleware, isValidMiddlewareArray } from "./validation.js";
+import { LabeledMiddleware, Middleware } from ".";
+import { makeMiddlewareExecutor } from "./executor";
+import { isValidMiddleware, isValidMiddlewareArray } from "./validation";
 
 export function label<T extends LabeledMiddleware>(
   middleware: T,

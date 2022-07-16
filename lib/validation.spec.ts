@@ -1,4 +1,4 @@
-import { isValidMiddleware } from "./validation.js";
+import { isValidMiddleware } from "./validation";
 
 describe("isValidMiddleware", () => {
   it("returns false for invalid input", () => {

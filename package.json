@@ -7,13 +7,8 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js",
-    "./label.js": "./dist/label.js",
-    "./label": "./dist/label.js",
-    "./use.js": "./dist/use.js",
-    "./use": "./dist/use.js",
-    "./validation.js": "./dist/validation.js",
-    "./validation": "./dist/validation.js"
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "types": "./dist/index.d.ts",
   "engines": {
@@ -33,7 +28,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "tsup",
     "type-check": "tsc --pretty --noEmit",
     "test": "jest",
     "version": "pnpm test && pnpm build"
@@ -50,7 +45,7 @@
     "jest-extended": "^0.11.5",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "next": "^12.1.0",
-    "rimraf": "^3.0.2",
+    "tsup": "^6.1.3",
     "typescript": "^4.6.2"
   },
   "dependencies": {

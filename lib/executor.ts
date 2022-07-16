@@ -1,8 +1,8 @@
 import { Debugger } from "debug";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { Middleware } from "./index.js";
-import { logger } from "./logger.js";
-import { controlledPromise, isPromise } from "./promises.js";
+import { Middleware } from ".";
+import { logger } from "./logger";
+import { controlledPromise, isPromise } from "./promises";
 
 // This gets invoked internally by `use` and `label`
 export function makeMiddlewareExecutor(middlewareFns: Middleware[]) {

@@ -1,4 +1,4 @@
-import { use } from "./use.js";
+import { use } from "./use";
 
 describe("use", () => {
   it("throws an error for invalid middleware", () => {
