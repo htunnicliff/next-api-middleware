@@ -34,16 +34,16 @@
     "version": "pnpm test && pnpm build"
   },
   "devDependencies": {
-    "@swc/core": "^1.2.148",
-    "@swc/jest": "^0.2.20",
+    "@swc/core": "^1.3.24",
+    "@swc/jest": "^0.2.24",
     "@types/jest": "^26.0.24",
-    "@types/node": "^16.11.26",
+    "@types/node": "^16.18.10",
     "jest": "^27.5.1",
     "jest-extended": "^0.11.5",
     "jest-ts-webcompat-resolver": "^1.0.0",
-    "next": "^12.1.0",
-    "tsup": "^6.1.3",
-    "typescript": "^4.6.2"
+    "next": "^12.3.4",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "next": ">=10"
