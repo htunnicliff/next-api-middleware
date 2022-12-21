@@ -10,7 +10,7 @@
     <img alt="license" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
   </a>
    <a aria-label="tests" href="https://github.com/htunnicliff/next-api-middleware/actions?query=workflow%3ATest">
-    <img alt="tests" src="https://img.shields.io/github/workflow/status/htunnicliff/next-api-middleware/Test?style=for-the-badge&labelColor=000000&label=Tests">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/htunnicliff/next-api-middleware/main.yaml?label=Tests&labelColor=000000&style=for-the-badge">
   </a>
   <a aria-label="coverage" href="https://codecov.io/gh/htunnicliff/next-api-middleware/">
     <img alt="Codecov" src="https://img.shields.io/codecov/c/github/htunnicliff/next-api-middleware?style=for-the-badge&labelColor=000000&token=XI7G8L08TY">
