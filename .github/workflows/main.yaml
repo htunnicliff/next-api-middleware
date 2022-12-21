@@ -1,14 +1,50 @@
 name: Main
 
-on: [push]
+on:
+  push:
+    branches:
+      - canary
+  pull_request:
 
 jobs:
   build:
-    name: Build and Test (Node.js ${{ matrix.node }})
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.2
+          run_install: true
+
+      - name: Check Types
+        run: pnpm type-check
+
+      - name: Build
+        run: pnpm build
+  test:
+    name: Test with Node.js ${{ matrix.node }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [12, 14, 16]
+        node: [12, 14, 16, 18]
     env:
       CI: true
     steps:
@@ -32,12 +68,6 @@ jobs:
         with:
           version: 6.32.2
           run_install: true
-
-      - name: Check Types
-        run: pnpm type-check
-
-      - name: Build
-        run: pnpm build
 
       - name: Test
         run: pnpm test
