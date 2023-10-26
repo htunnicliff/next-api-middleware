@@ -4,16 +4,19 @@
 
 <p align="center">
   <a aria-label="npm" href="https://www.npmjs.com/package/next-api-middleware">
-    <img alt="npm" src="https://img.shields.io/npm/v/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
+    <img alt="npm" src="https://img.shields.io/npm/v/next-api-middleware.svg">
+  </a>
+  <a aria-label="npm downloads" href="https://www.npmjs.com/package/next-api-middleware">
+    <img alt="npm" src="https://img.shields.io/npm/dm/next-api-middleware">
   </a>
   <a aria-label="license" href="https://github.com/htunnicliff/next-api-middleware/blob/master/LICENSE">
-    <img alt="license" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg?style=for-the-badge&labelColor=000000">
+    <img alt="license" src="https://img.shields.io/github/license/htunnicliff/next-api-middleware.svg">
   </a>
    <a aria-label="tests" href="https://github.com/htunnicliff/next-api-middleware/actions?query=workflow%3ATest">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/htunnicliff/next-api-middleware/main.yaml?label=Tests&labelColor=000000&style=for-the-badge">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/htunnicliff/next-api-middleware/main.yaml?label=Tests">
   </a>
   <a aria-label="coverage" href="https://codecov.io/gh/htunnicliff/next-api-middleware/">
-    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/htunnicliff/next-api-middleware?style=for-the-badge&labelColor=000000&token=XI7G8L08TY">
+    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/htunnicliff/next-api-middleware?&&token=XI7G8L08TY">
   </a>
 </p>
 
