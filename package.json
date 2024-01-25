@@ -18,8 +18,7 @@
     "next",
     "next.js",
     "middleware",
-    "API routes",
-    "express"
+    "API routes"
   ],
   "files": [
     "dist",
