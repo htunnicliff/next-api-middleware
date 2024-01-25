@@ -41,6 +41,7 @@ This library attempts to provide minimal, clean, composable middleware patterns 
 - [Advanced](#advanced)
   - [Middleware Factories](#middleware-factories)
   - [Middleware Signature](#middleware-types)
+- [Alternatives](#alternatives)
 
 ## Quick Start
 
@@ -299,3 +300,7 @@ type Middleware<Request = NextApiRequest, Response = NextApiResponse> = (
   next: () => Promise<void>
 ) => Promise<void>;
 ```
+
+## Alternatives
+
+- [next-connect](https://github.com/hoangvvo/next-connect)
