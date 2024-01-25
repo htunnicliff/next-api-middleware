@@ -22,11 +22,13 @@
 
 ## Introduction
 
+> ⚠️ **This library was written to support API routes that use the Next.js [Pages Router](https://nextjs.org/docs/pages). It has not been tested with the [App Router](https://nextjs.org/docs/app).**
+
 [Next.js API routes](https://nextjs.org/docs/api-routes/introduction) are a ridiculously fun and simple way to add backend functionality to a React app. However, when it comes time to add middleware, there is no easy way to implement it.
 
-The official Next.js docs recommend writing functions [inside your API route handler](https://nextjs.org/docs/api-routes/api-middlewares) :thumbsdown:. This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
+The official Next.js docs recommend writing functions [inside your API route handler](https://nextjs.org/docs/api-routes/api-middlewares). This is a huge step backward compared to the clean APIs provided by Express.js or Koa.js.
 
-This library attempts to provide minimal, clean, composable middleware patterns that are both productive and pleasant to use. :tada:
+This library attempts to provide minimal, clean, composable middleware patterns that are both productive and pleasant to use.
 
 ## Table of Contents
 
